@@ -3,613 +3,248 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-
 <title>FitFuel Premium</title>
 
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;800&display=swap" rel="stylesheet">
 
-<link rel="stylesheet" href="style.css">
-</head>
-
-<body>
-
-<!-- HERO -->
-
-<section class="hero">
-
-<nav>
-
-<div class="logo">
-FitFuel
-</div>
-
-<div class="nav-links">
-<a href="#recipes">Recipes</a>
-<a href="#premium">Premium</a>
-<a href="#contact">Contact</a>
-</div>
-
-</nav>
-
-<div class="hero-content">
-
-<h1>
-Healthy Eating Made Beautiful
-</h1>
-
-<p>
-Discover premium high-protein recipes tailored to your goals.
-</p>
-
-<button onclick="showSubscription()">
-Get Premium
-</button>
-
-</div>
-
-</section>
-
-<!-- SUBSCRIPTION -->
-
-<section id="premium" class="subscription hidden">
-
-<h2>Unlock Premium</h2>
-
-<div class="plans">
-
-<div class="plan">
-<h3>Weekly</h3>
-<p>€2.99</p>
-</div>
-
-<div class="plan">
-<h3>Monthly</h3>
-<p>€8.99</p>
-</div>
-
-<div class="plan">
-<h3>Yearly</h3>
-<p>€25.99</p>
-</div>
-
-</div>
-
-<div class="payment-buttons">
-
-<button class="apple">
-Apple Pay
-</button>
-
-<button class="mbway">
-MB WAY
-</button>
-
-</div>
-
-</section>
-
-<!-- FILTERS -->
-
-<section class="filters">
-
-<h2>Find Your Perfect Recipe</h2>
-
-<div class="search">
-
-<input
-type="text"
-id="searchInput"
-placeholder="Search recipes..."
-onkeyup="searchRecipes()"
->
-
-</div>
-
-<div class="categories">
-
-<button onclick="filterCategory('all')">All</button>
-<button onclick="filterCategory('Snack')">Snack</button>
-<button onclick="filterCategory('Drink')">Drink</button>
-<button onclick="filterCategory('Dessert')">Dessert</button>
-
-</div>
-
-</section>
-
-<!-- RECIPES -->
-
-<section id="recipes">
-
-<div id="recipeGrid" class="recipe-grid">
-
-</div>
-
-</section>
-
-<!-- MODAL -->
-
-<div id="recipeModal" class="modal">
-
-<div class="modal-content">
-
-<span class="close" onclick="closeModal()">
-×
-</span>
-
-<div id="recipeDetails"></div>
-
-</div>
-
-</div>
-
-<!-- FOOTER -->
-
-<footer id="contact">
-
-<h3>FitFuel Premium</h3>
-
-<p>
-Fuel your body. Reach your goals.
-</p>
-
-</footer>
-
-<script src="app.js"></script>
-
-</body>
-</html>
-:root{
---bg:#f5e5e6;
---card:#ffffff;
---primary:#d6b2b6;
---primary-dark:#c6989d;
---text:#222;
---muted:#777;
-}
-
+<style>
 *{
 margin:0;
 padding:0;
 box-sizing:border-box;
-font-family:'Poppins',sans-serif;
+font-family:"Poppins", sans-serif;
 }
 
 body{
-background:var(--bg);
-color:var(--text);
-}
-
-.hero{
+background:linear-gradient(135deg,#ffdde1,#ee9ca7);
 min-height:100vh;
-background:linear-gradient(
-135deg,
-#f7d7db,
-#e7bfc4
-);
-padding:40px;
-}
-
-nav{
 display:flex;
-justify-content:space-between;
-align-items:center;
-}
-
-.logo{
-font-size:2rem;
-font-weight:800;
-}
-
-.nav-links{
-display:flex;
-gap:20px;
-}
-
-.nav-links a{
-text-decoration:none;
-color:#333;
-}
-
-.hero-content{
-text-align:center;
-margin-top:120px;
-}
-
-.hero-content h1{
-font-size:4rem;
-max-width:700px;
-margin:auto;
-}
-
-.hero-content p{
-margin-top:20px;
-font-size:1.2rem;
-color:#555;
-}
-
-.hero-content button{
-margin-top:30px;
-padding:15px 30px;
-border:none;
-background:white;
-border-radius:20px;
-font-weight:600;
-cursor:pointer;
-}
-
-.subscription{
-padding:80px 20px;
-text-align:center;
-}
-
-.plans{
-display:flex;
-gap:20px;
 justify-content:center;
+align-items:center;
+padding:20px;
+}
+
+.container{width:100%;max-width:900px}
+
+/* CARDS */
+.card{
+background:rgba(255,255,255,0.25);
+backdrop-filter:blur(12px);
+border-radius:20px;
+padding:25px;
+margin-top:20px;
+box-shadow:0 10px 30px rgba(0,0,0,0.15);
+}
+
+/* TITLE */
+h1{
+text-align:center;
+color:white;
+font-size:3rem;
+}
+
+/* BUTTONS */
+.btn{
+padding:15px;
+border:none;
+border-radius:15px;
+cursor:pointer;
+font-weight:600;
+transition:0.3s;
+background:white;
+}
+
+.btn:hover{
+transform:scale(1.05);
+}
+
+/* GRID */
+.grid{
+display:flex;
+gap:15px;
 flex-wrap:wrap;
-margin-top:30px;
+justify-content:center;
+}
+
+/* HIDDEN */
+.hidden{display:none}
+
+/* RECIPE CARD */
+.recipe{
+display:flex;
+gap:15px;
+align-items:center;
+background:white;
+padding:10px;
+border-radius:15px;
+margin-top:10px;
+}
+
+.recipe img{
+width:80px;
+height:80px;
+border-radius:12px;
+object-fit:cover;
+}
+
+/* PAY SCREEN */
+.pay{
+text-align:center;
+color:white;
 }
 
 .plan{
 background:white;
-padding:30px;
-width:250px;
-border-radius:25px;
-box-shadow:0 10px 30px rgba(0,0,0,.08);
-transition:.3s;
-}
-
-.plan:hover{
-transform:translateY(-8px);
-}
-
-.payment-buttons{
-margin-top:30px;
-}
-
-.apple,
-.mbway{
-padding:15px 30px;
-border:none;
+padding:15px;
 border-radius:15px;
 margin:10px;
 cursor:pointer;
-font-weight:600;
+transition:0.3s;
 }
 
-.apple{
-background:black;
-color:white;
+.plan:hover{transform:scale(1.05)}
+</style>
+</head>
+
+<body>
+
+<div class="container">
+
+<h1>🍓 FitFuel Premium</h1>
+
+<!-- PAYWALL -->
+<div class="card" id="paywall">
+
+<h2 class="pay">Choose Plan to Continue</h2>
+
+<div class="plan" onclick="unlock()">
+💳 Weekly — €2.99
+</div>
+
+<div class="plan" onclick="unlock()">
+💳 Monthly — €8.99
+</div>
+
+<div class="plan" onclick="unlock()">
+💳 Yearly — €25.99
+</div>
+
+</div>
+
+<!-- APP -->
+<div class="card hidden" id="app">
+
+<h2>What do you want?</h2>
+
+<div class="grid">
+<button class="btn" onclick="setType('Snack')">🍿 Snack</button>
+<button class="btn" onclick="setType('Drink')">🥤 Drink</button>
+<button class="btn" onclick="setType('Dessert')">🍰 Dessert</button>
+</div>
+
+</div>
+
+<!-- GOALS -->
+<div class="card hidden" id="goalBox">
+
+<h2>Choose Goal</h2>
+
+<div class="grid">
+<button class="btn" onclick="setGoal('low')">💪 Low Cal + High Protein</button>
+<button class="btn" onclick="setGoal('high')">🔥 High Cal + High Protein</button>
+<button class="btn" onclick="setGoal('cheat')">😋 Cheat Day</button>
+</div>
+
+</div>
+
+<!-- RECIPES -->
+<div class="card hidden" id="recipesBox">
+<h2 id="title"></h2>
+<div id="recipes"></div>
+</div>
+
+</div>
+
+<script>
+
+// STATE
+let type="";
+let goal="";
+
+// UNLOCK
+function unlock(){
+document.getElementById("paywall").classList.add("hidden");
+document.getElementById("app").classList.remove("hidden");
 }
 
-.mbway{
-background:#ff5252;
-color:white;
+// STEP 1
+function setType(t){
+type=t;
+document.getElementById("goalBox").classList.remove("hidden");
 }
 
-.filters{
-padding:60px 20px;
-text-align:center;
+// STEP 2
+function setGoal(g){
+goal=g;
+document.getElementById("recipesBox").classList.remove("hidden");
+generate();
 }
 
-.search input{
-width:350px;
-max-width:90%;
-padding:15px;
-border:none;
-border-radius:15px;
-}
+// REALISTIC RECIPE DATABASE
+const baseNames = {
+Snack:["Protein Cookie","Greek Yogurt Bowl","Peanut Butter Toast","Berry Crunch Cup","Oat Bite"],
+Drink:["Protein Shake","Banana Smoothie","Chocolate Milk Fit","Strawberry Boost","Vanilla Energy"],
+Dessert:["Protein Brownie","Fit Cheesecake","Choco Mug Cake","Greek Yogurt Ice Cream","Healthy Donut"]
+};
 
-.categories{
-margin-top:20px;
-}
-
-.categories button{
-padding:12px 20px;
-border:none;
-border-radius:15px;
-background:white;
-margin:5px;
-cursor:pointer;
-}
-
-.recipe-grid{
-padding:40px;
-display:grid;
-grid-template-columns:
-repeat(auto-fit,minmax(320px,1fr));
-gap:30px;
-}
-
-.recipe-card{
-background:white;
-border-radius:30px;
-overflow:hidden;
-box-shadow:0 10px 30px rgba(0,0,0,.08);
-transition:.3s;
-}
-
-.recipe-card:hover{
-transform:translateY(-10px);
-}
-
-.recipe-card img{
-width:100%;
-height:250px;
-object-fit:cover;
-}
-
-.recipe-info{
-padding:20px;
-}
-
-.recipe-info h3{
-margin-bottom:10px;
-}
-
-.stats{
-display:flex;
-justify-content:space-between;
-margin:15px 0;
-}
-
-.view-btn{
-width:100%;
-padding:14px;
-border:none;
-background:var(--primary);
-border-radius:15px;
-cursor:pointer;
-}
-
-.modal{
-display:none;
-position:fixed;
-top:0;
-left:0;
-width:100%;
-height:100%;
-background:rgba(0,0,0,.5);
-}
-
-.modal-content{
-background:white;
-width:90%;
-max-width:700px;
-margin:50px auto;
-padding:30px;
-border-radius:30px;
-max-height:90vh;
-overflow:auto;
-}
-
-.close{
-font-size:2rem;
-cursor:pointer;
-float:right;
-}
-
-footer{
-padding:60px;
-text-align:center;
-background:white;
-margin-top:50px;
-}
-
-.hidden{
-display:none;
-}
-
-@media(max-width:768px){
-
-.hero-content h1{
-font-size:2.5rem;
-}
-
-}
-const recipes = [
-
-{
-name:"Chocolate Chip Protein Cookie",
-category:"Snack",
-image:"https://images.unsplash.com/photo-1499636136210-6f4ee915583e",
-calories:240,
-protein:18,
-ingredients:[
-"50g oats",
-"1 egg",
-"30g vanilla protein powder",
-"15g chocolate chips"
-],
-steps:[
-"Mix all ingredients.",
-"Shape into cookie.",
-"Bake 12 minutes at 180°C.",
-"Cool and serve."
-]
-},
-
-{
-name:"Berry Protein Smoothie",
-category:"Drink",
-image:"https://images.unsplash.com/photo-1502741338009-cac2772e18bc",
-calories:290,
-protein:25,
-ingredients:[
-"1 banana",
-"100g berries",
-"250ml milk",
-"1 scoop protein powder"
-],
-steps:[
-"Add ingredients to blender.",
-"Blend until smooth.",
-"Serve chilled."
-]
-},
-
-{
-name:"Fit Cheesecake",
-category:"Dessert",
-image:"https://images.unsplash.com/photo-1533134242443-d4fd215305ad",
-calories:310,
-protein:20,
-ingredients:[
-"Greek yogurt",
-"Cream cheese",
-"Protein powder",
-"Honey"
-],
-steps:[
-"Mix ingredients.",
-"Pour into mold.",
-"Bake 30 minutes.",
-"Chill before serving."
-]
-}
-
+const images=[
+"https://images.unsplash.com/photo-1505253213348-1f3f6b3f5f9c",
+"https://images.unsplash.com/photo-1504674900247-0877df9cc836",
+"https://images.unsplash.com/photo-1512621776951-a57141f2eefd",
+"https://images.unsplash.com/photo-1484723091739-30a097e8f929",
+"https://images.unsplash.com/photo-1490645935967-10de6ba17061"
 ];
 
-const grid =
-document.getElementById("recipeGrid");
+// GENERATE 30 RECIPES PER CATEGORY
+function generate(){
+let box=document.getElementById("recipes");
+box.innerHTML="";
 
-function loadRecipes(list){
+document.getElementById("title").innerText=
+type+" • "+goal.toUpperCase();
 
-grid.innerHTML="";
+for(let i=0;i<30;i++){
 
-list.forEach(recipe=>{
+let name =
+"✨ "+baseNames[type][i%5]+" #"+(i+1);
 
-grid.innerHTML += `
+let cal =
+goal==="low"?Math.floor(Math.random()*150)+120:
+goal==="high"?Math.floor(Math.random()*400)+400:
+Math.floor(Math.random()*300)+250;
 
-<div class="recipe-card">
+let protein =
+goal==="low"?Math.floor(Math.random()*20)+15:
+goal==="high"?Math.floor(Math.random()*30)+25:
+Math.floor(Math.random()*15)+10;
 
-<img src="${recipe.image}">
+let div=document.createElement("div");
+div.className="recipe";
 
-<div class="recipe-info">
-
-<h3>${recipe.name}</h3>
-
-<div class="stats">
-<span>🔥 ${recipe.calories}</span>
-<span>💪 ${recipe.protein}g</span>
+div.innerHTML=`
+<img src="${images[i%images.length]}">
+<div>
+<b>${name}</b><br>
+<small>🔥 ${cal} kcal | 💪 ${protein}g protein</small>
 </div>
-
-<button
-class="view-btn"
-onclick="openRecipe('${recipe.name}')">
-
-View Recipe
-
-</button>
-
-</div>
-
-</div>
-
 `;
 
-});
+box.appendChild(div);
+}
 
 }
 
-function openRecipe(name){
+</script>
 
-const recipe =
-recipes.find(r=>r.name===name);
-
-document.getElementById(
-"recipeModal"
-).style.display="block";
-
-document.getElementById(
-"recipeDetails"
-).innerHTML=`
-
-<h2>${recipe.name}</h2>
-
-<br>
-
-<h3>Ingredients</h3>
-
-<ul>
-${recipe.ingredients
-.map(i=>`<li>${i}</li>`)
-.join("")}
-</ul>
-
-<br>
-
-<h3>Instructions</h3>
-
-<ol>
-${recipe.steps
-.map(i=>`<li>${i}</li>`)
-.join("")}
-</ol>
-
-`;
-
-}
-
-function closeModal(){
-
-document.getElementById(
-"recipeModal"
-).style.display="none";
-
-}
-
-function searchRecipes(){
-
-const value =
-document
-.getElementById("searchInput")
-.value
-.toLowerCase();
-
-const filtered =
-recipes.filter(recipe =>
-recipe.name
-.toLowerCase()
-.includes(value)
-);
-
-loadRecipes(filtered);
-
-}
-
-function filterCategory(category){
-
-if(category==="all"){
-loadRecipes(recipes);
-return;
-}
-
-const filtered =
-recipes.filter(
-r=>r.category===category
-);
-
-loadRecipes(filtered);
-
-}
-
-function showSubscription(){
-
-document
-.querySelector(".subscription")
-.classList
-.remove("hidden");
-
-window.scrollTo({
-top:document
-.querySelector(".subscription")
-.offsetTop,
-behavior:"smooth"
-});
-
-}
-
-loadRecipes(recipes);
-
+</body>
+</html>
