@@ -1,250 +1,1517 @@
+codes yes!
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>FitFuel Premium</title>
-
-<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;800&display=swap" rel="stylesheet">
-
-<style>
-*{
-margin:0;
-padding:0;
-box-sizing:border-box;
-font-family:"Poppins", sans-serif;
-}
-
-body{
-background:linear-gradient(135deg,#ffdde1,#ee9ca7);
-min-height:100vh;
-display:flex;
-justify-content:center;
-align-items:center;
-padding:20px;
-}
-
-.container{width:100%;max-width:900px}
-
-/* CARDS */
-.card{
-background:rgba(255,255,255,0.25);
-backdrop-filter:blur(12px);
-border-radius:20px;
-padding:25px;
-margin-top:20px;
-box-shadow:0 10px 30px rgba(0,0,0,0.15);
-}
-
-/* TITLE */
-h1{
-text-align:center;
-color:white;
-font-size:3rem;
-}
-
-/* BUTTONS */
-.btn{
-padding:15px;
-border:none;
-border-radius:15px;
-cursor:pointer;
-font-weight:600;
-transition:0.3s;
-background:white;
-}
-
-.btn:hover{
-transform:scale(1.05);
-}
-
-/* GRID */
-.grid{
-display:flex;
-gap:15px;
-flex-wrap:wrap;
-justify-content:center;
-}
-
-/* HIDDEN */
-.hidden{display:none}
-
-/* RECIPE CARD */
-.recipe{
-display:flex;
-gap:15px;
-align-items:center;
-background:white;
-padding:10px;
-border-radius:15px;
-margin-top:10px;
-}
-
-.recipe img{
-width:80px;
-height:80px;
-border-radius:12px;
-object-fit:cover;
-}
-
-/* PAY SCREEN */
-.pay{
-text-align:center;
-color:white;
-}
-
-.plan{
-background:white;
-padding:15px;
-border-radius:15px;
-margin:10px;
-cursor:pointer;
-transition:0.3s;
-}
-
-.plan:hover{transform:scale(1.05)}
-</style>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>BlushBites | Recipe Website</title>
+  <!-- Google Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Pacifico&family=Poppins:wght@300;400;500;600;700&family=Quicksand:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <!-- CSS -->
+  <link rel="stylesheet" href="style.css" />
 </head>
-
 <body>
-
-<div class="container">
-
-<h1>🍓 FitFuel Premium</h1>
-
-<!-- PAYWALL -->
-<div class="card" id="paywall">
-
-<h2 class="pay">Choose Plan to Continue</h2>
-
-<div class="plan" onclick="unlock()">
-💳 Weekly — €2.99
-</div>
-
-<div class="plan" onclick="unlock()">
-💳 Monthly — €8.99
-</div>
-
-<div class="plan" onclick="unlock()">
-💳 Yearly — €25.99
-</div>
-
-</div>
-
-<!-- APP -->
-<div class="card hidden" id="app">
-
-<h2>What do you want?</h2>
-
-<div class="grid">
-<button class="btn" onclick="setType('Snack')">🍿 Snack</button>
-<button class="btn" onclick="setType('Drink')">🥤 Drink</button>
-<button class="btn" onclick="setType('Dessert')">🍰 Dessert</button>
-</div>
-
-</div>
-
-<!-- GOALS -->
-<div class="card hidden" id="goalBox">
-
-<h2>Choose Goal</h2>
-
-<div class="grid">
-<button class="btn" onclick="setGoal('low')">💪 Low Cal + High Protein</button>
-<button class="btn" onclick="setGoal('high')">🔥 High Cal + High Protein</button>
-<button class="btn" onclick="setGoal('cheat')">😋 Cheat Day</button>
-</div>
-
-</div>
-
-<!-- RECIPES -->
-<div class="card hidden" id="recipesBox">
-<h2 id="title"></h2>
-<div id="recipes"></div>
-</div>
-
-</div>
-
-<script>
-
-// STATE
-let type="";
-let goal="";
-
-// UNLOCK
-function unlock(){
-document.getElementById("paywall").classList.add("hidden");
-document.getElementById("app").classList.remove("hidden");
-}
-
-// STEP 1
-function setType(t){
-type=t;
-document.getElementById("goalBox").classList.remove("hidden");
-}
-
-// STEP 2
-function setGoal(g){
-goal=g;
-document.getElementById("recipesBox").classList.remove("hidden");
-generate();
-}
-
-// REALISTIC RECIPE DATABASE
-const baseNames = {
-Snack:["Protein Cookie","Greek Yogurt Bowl","Peanut Butter Toast","Berry Crunch Cup","Oat Bite"],
-Drink:["Protein Shake","Banana Smoothie","Chocolate Milk Fit","Strawberry Boost","Vanilla Energy"],
-Dessert:["Protein Brownie","Fit Cheesecake","Choco Mug Cake","Greek Yogurt Ice Cream","Healthy Donut"]
-};
-
-const images=[
-"https://images.unsplash.com/photo-1505253213348-1f3f6b3f5f9c",
-"https://images.unsplash.com/photo-1504674900247-0877df9cc836",
-"https://images.unsplash.com/photo-1512621776951-a57141f2eefd",
-"https://images.unsplash.com/photo-1484723091739-30a097e8f929",
-"https://images.unsplash.com/photo-1490645935967-10de6ba17061"
-];
-
-// GENERATE 30 RECIPES PER CATEGORY
-function generate(){
-let box=document.getElementById("recipes");
-box.innerHTML="";
-
-document.getElementById("title").innerText=
-type+" • "+goal.toUpperCase();
-
-for(let i=0;i<30;i++){
-
-let name =
-"✨ "+baseNames[type][i%5]+" #"+(i+1);
-
-let cal =
-goal==="low"?Math.floor(Math.random()*150)+120:
-goal==="high"?Math.floor(Math.random()*400)+400:
-Math.floor(Math.random()*300)+250;
-
-let protein =
-goal==="low"?Math.floor(Math.random()*20)+15:
-goal==="high"?Math.floor(Math.random()*30)+25:
-Math.floor(Math.random()*15)+10;
-
-let div=document.createElement("div");
-div.className="recipe";
-
-div.innerHTML=`
-<img src="${images[i%images.length]}">
-<div>
-<b>${name}</b><br>
-<small>🔥 ${cal} kcal | 💪 ${protein}g protein</small>
-</div>
-`;
-
-box.appendChild(div);
-}
-
-}
-
-</script>
-
+  <!-- Loading Screen -->
+  <div id="loadingScreen">
+    <div class="loader-card">
+      <div class="loader-icon">🧁</div>
+      <h1>BlushBites</h1>
+      <p>Preparing something sweet...</p>
+    </div>
+  </div>
+  <!-- Floating Decorations -->
+  <div class="floating-decor decor-1">🍓</div>
+  <div class="floating-decor decor-2">💕</div>
+  <div class="floating-decor decor-3">🌸</div>
+  <div class="floating-decor decor-4">✨</div>
+  <!-- Navigation -->
+  <header class="navbar">
+    <div class="logo" onclick="showPage('home')">
+      <span>🍓</span>
+      <h2>BlushBites</h2>
+    </div>
+    <nav id="navMenu">
+      <a onclick="showPage('home')">Home</a>
+      <a onclick="selectCategory('snacks')">Snacks</a>
+      <a onclick="selectCategory('desserts')">Desserts</a>
+      <a onclick="selectCategory('drinks')">Drinks</a>
+      <a onclick="showFavorites()">Favorites ❤️</a>
+      <a onclick="showPage('about')">About Us</a>
+      <a onclick="showPage('contact')">Contact</a>
+      <a onclick="showPage('login')" id="loginNav">Login</a>
+      <a onclick="showPage('signup')" id="signupNav" class="nav-btn">Sign Up</a>
+    </nav>
+    <div class="profile-area" id="profileArea"></div>
+    <button class="menu-btn" onclick="toggleMenu()">☰</button>
+  </header>
+  <!-- Main Content -->
+  <main>
+    <!-- Home Page -->
+    <section id="home" class="page active">
+      <div class="hero">
+        <div class="hero-text">
+          <p class="tagline">Healthy, pretty & delicious</p>
+          <h1>Welcome to <span>BlushBites</span></h1>
+          <p>
+            Discover beautiful recipes based on your goals — from high-protein snacks
+            to cozy desserts and refreshing drinks.
+          </p>
+          <div class="hero-buttons">
+            <button class="primary-btn" onclick="scrollToCategories()">Start Exploring</button>
+            <button class="secondary-btn" onclick="showRandomRecipe()">Random Recipe 🎲</button>
+          </div>
+        </div>
+        <div class="hero-image">
+          <img src="https://images.unsplash.com/photo-1490645935967-10de6ba17061?auto=format&fit=crop&w=900&q=80" alt="Healthy food bowl">
+        </div>
+      </div>
+      <!-- Categories -->
+      <section id="categorySection" class="categories-section">
+        <h2>Choose a Category</h2>
+        <p>Pick what you are craving today.</p>
+        <div class="category-grid">
+          <div class="category-card" onclick="selectCategory('snacks')">
+            <span>🥪</span>
+            <h3>Snacks</h3>
+            <p>Quick bites for any moment.</p>
+          </div>
+          <div class="category-card" onclick="selectCategory('desserts')">
+            <span>🍰</span>
+            <h3>Desserts</h3>
+            <p>Sweet recipes with a blush twist.</p>
+          </div>
+          <div class="category-card" onclick="selectCategory('drinks')">
+            <span>🥤</span>
+            <h3>Drinks</h3>
+            <p>Refreshing sips and smoothies.</p>
+          </div>
+        </div>
+      </section>
+      <!-- Goal Selection -->
+      <section id="goalSection" class="goal-section hidden">
+        <h2>Choose Your Goal</h2>
+        <p id="selectedCategoryText"></p>
+        <div class="goal-grid">
+          <button onclick="filterByGoal('low')">🥗 High Protein + Low Calories</button>
+          <button onclick="filterByGoal('high')">💪 High Protein + High Calories</button>
+          <button onclick="filterByGoal('treat')">🍩 Treat Yourself</button>
+        </div>
+      </section>
+    </section>
+    <!-- Recipes Page -->
+    <section id="recipes" class="page">
+      <div class="section-header">
+        <h2 id="recipesTitle">Recipes</h2>
+        <p>Search, filter, save and enjoy your favorite BlushBites recipes.</p>
+      </div>
+      <div class="filters">
+        <input type="text" id="searchInput" placeholder="Search recipes..." oninput="searchRecipes()">
+        <select id="categoryFilter" onchange="applyFilters()">
+          <option value="all">All Categories</option>
+          <option value="snacks">Snacks</option>
+          <option value="desserts">Desserts</option>
+          <option value="drinks">Drinks</option>
+        </select>
+        <select id="goalFilter" onchange="applyFilters()">
+          <option value="all">All Goals</option>
+          <option value="low">High Protein + Low Calories</option>
+          <option value="high">High Protein + High Calories</option>
+          <option value="treat">Treat Yourself</option>
+        </select>
+      </div>
+      <div id="recipeGrid" class="recipe-grid"></div>
+    </section>
+    <!-- Recipe Detail Page -->
+    <section id="recipeDetail" class="page">
+      <div id="recipeDetailContent" class="recipe-detail"></div>
+    </section>
+    <!-- Favorites Page -->
+    <section id="favorites" class="page">
+      <div class="section-header">
+        <h2>Your Favorites ❤️</h2>
+        <p>All your saved recipes appear here.</p>
+      </div>
+      <div id="favoritesGrid" class="recipe-grid"></div>
+    </section>
+    <!-- About Page -->
+    <section id="about" class="page">
+      <div class="info-page">
+        <h2>About BlushBites</h2>
+        <p>
+          BlushBites helps people discover delicious recipes based on their personal goals
+          while making healthy eating feel fun, cozy and enjoyable.
+        </p>
+        <p>
+          Whether you want a high-protein snack, a refreshing drink, or a dessert that feels
+          like a little treat, BlushBites gives you pretty, simple and realistic recipes.
+        </p>
+        <div class="about-cards">
+          <div>
+            <span>🥗</span>
+            <h3>Goal-Based Recipes</h3>
+            <p>Find recipes based on calories, protein or cravings.</p>
+          </div>
+          <div>
+            <span>💕</span>
+            <h3>Beautiful Design</h3>
+            <p>A soft pastel website made to feel elegant and friendly.</p>
+          </div>
+          <div>
+            <span>🍓</span>
+            <h3>Easy to Use</h3>
+            <p>Save favorites, rate recipes and explore with one click.</p>
+          </div>
+        </div>
+      </div>
+    </section>
+    <!-- Contact Page -->
+    <section id="contact" class="page">
+      <div class="info-page">
+        <h2>Contact Us</h2>
+        <p>Have a recipe idea or question? Send us a message.</p>
+        <div class="contact-wrapper">
+          <div class="contact-info">
+            <p><strong>Email:</strong> hello@blushbites.com</p>
+            <p><strong>Instagram:</strong> @blushbites</p>
+            <p><strong>Location:</strong> Your City, Your Country</p>
+          </div>
+          <form class="contact-form" onsubmit="sendContact(event)">
+            <input type="text" placeholder="Your name" required>
+            <input type="email" placeholder="Your email" required>
+            <textarea placeholder="Your message" required></textarea>
+            <button class="primary-btn" type="submit">Send Message</button>
+          </form>
+        </div>
+      </div>
+    </section>
+    <!-- Login Page -->
+    <section id="login" class="page">
+      <div class="auth-card">
+        <h2>Login</h2>
+        <p>Welcome back to BlushBites 💕</p>
+        <form onsubmit="loginUser(event)">
+          <input type="text" id="loginUsername" placeholder="Username" required>
+          <input type="password" id="loginPassword" placeholder="Password" required>
+          <button class="primary-btn" type="submit">Login</button>
+        </form>
+        <p class="switch-auth">
+          Don’t have an account?
+          <span onclick="showPage('signup')">Sign up</span>
+        </p>
+      </div>
+    </section>
+    <!-- Sign Up Page -->
+    <section id="signup" class="page">
+      <div class="auth-card">
+        <h2>Sign Up</h2>
+        <p>Create your BlushBites account 🍓</p>
+        <form onsubmit="signupUser(event)">
+          <input type="text" id="signupUsername" placeholder="Username" required>
+          <input type="email" id="signupEmail" placeholder="Email" required>
+          <input type="password" id="signupPassword" placeholder="Password" required>
+          <button class="primary-btn" type="submit">Create Account</button>
+        </form>
+        <p class="switch-auth">
+          Already have an account?
+          <span onclick="showPage('login')">Login</span>
+        </p>
+      </div>
+    </section>
+  </main>
+  <!-- Scroll To Top Button -->
+  <button id="scrollTopBtn" onclick="scrollToTop()">↑</button>
+  <!-- Footer -->
+  <footer>
+    <div class="footer-logo">
+      <h2>BlushBites</h2>
+      <p>Pretty recipes for every goal.</p>
+    </div>
+    <div class="footer-links">
+      <a onclick="showPage('about')">About Us</a>
+      <a onclick="showPage('contact')">Contact</a>
+      <a href="#">Instagram</a>
+    </div>
+    <p class="copyright">
+      © 2026 BlushBites. All rights reserved.
+    </p>
+  </footer>
+  <!-- JavaScript -->
+  <script src="script.js"></script>
 </body>
 </html>
+/* =========================
+   BlushBites - Part 2A CSS
+   Global styles, navbar, hero,
+   homepage, loading screen,
+   buttons and animations
+========================= */
+:root {
+  --pink: #f8a8c6;
+  --soft-pink: #ffe4ee;
+  --deep-pink: #d95f8d;
+  --cream: #fff8f1;
+  --beige: #f4dfcf;
+  --white: #ffffff;
+  --text: #4b2f3b;
+  --muted: #8a6f79;
+  --shadow: 0 12px 35px rgba(217, 95, 141, 0.18);
+  --radius: 24px;
+}
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+html {
+  scroll-behavior: smooth;
+}
+body {
+  font-family: "Poppins", sans-serif;
+  background: linear-gradient(135deg, var(--cream), var(--soft-pink));
+  color: var(--text);
+  min-height: 100vh;
+  overflow-x: hidden;
+}
+button,
+input,
+textarea,
+select {
+  font-family: inherit;
+}
+button {
+  cursor: pointer;
+  border: none;
+}
+a {
+  text-decoration: none;
+  color: inherit;
+  cursor: pointer;
+}
+img {
+  max-width: 100%;
+  display: block;
+}
+.hidden {
+  display: none !important;
+}
+/* =========================
+   Loading Screen
+========================= */
+#loadingScreen {
+  position: fixed;
+  inset: 0;
+  background: linear-gradient(135deg, #fff7fb, #ffe1ec);
+  z-index: 9999;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: opacity 0.6s ease, visibility 0.6s ease;
+}
+#loadingScreen.hide {
+  opacity: 0;
+  visibility: hidden;
+}
+.loader-card {
+  background: var(--white);
+  padding: 45px 55px;
+  border-radius: 35px;
+  box-shadow: var(--shadow);
+  text-align: center;
+  animation: popIn 0.8s ease;
+}
+.loader-icon {
+  font-size: 4rem;
+  animation: bounce 1.4s infinite;
+}
+.loader-card h1 {
+  font-family: "Pacifico", cursive;
+  color: var(--deep-pink);
+  margin-top: 10px;
+  font-size: 2.7rem;
+}
+.loader-card p {
+  color: var(--muted);
+  margin-top: 8px;
+}
+/* =========================
+   Floating Decorations
+========================= */
+.floating-decor {
+  position: fixed;
+  z-index: 1;
+  font-size: 2rem;
+  opacity: 0.55;
+  pointer-events: none;
+  animation: float 6s ease-in-out infinite;
+}
+.decor-1 {
+  top: 18%;
+  left: 4%;
+}
+.decor-2 {
+  top: 70%;
+  left: 8%;
+  animation-delay: 1s;
+}
+.decor-3 {
+  top: 22%;
+  right: 5%;
+  animation-delay: 2s;
+}
+.decor-4 {
+  bottom: 18%;
+  right: 9%;
+  animation-delay: 3s;
+}
+/* =========================
+   Navbar
+========================= */
+.navbar {
+  width: min(1180px, 92%);
+  position: sticky;
+  top: 18px;
+  z-index: 1000;
+  margin: 18px auto 0;
+  padding: 14px 22px;
+  background: rgba(255, 255, 255, 0.82);
+  backdrop-filter: blur(18px);
+  border: 1px solid rgba(255, 255, 255, 0.8);
+  border-radius: 999px;
+  box-shadow: var(--shadow);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+.logo {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  cursor: pointer;
+  flex-shrink: 0;
+}
+.logo span {
+  font-size: 1.6rem;
+}
+.logo h2 {
+  font-family: "Pacifico", cursive;
+  color: var(--deep-pink);
+  font-size: 1.7rem;
+}
+#navMenu {
+  display: flex;
+  align-items: center;
+  gap: 18px;
+}
+#navMenu a {
+  font-size: 0.92rem;
+  font-weight: 500;
+  color: var(--text);
+  transition: 0.3s ease;
+}
+#navMenu a:hover {
+  color: var(--deep-pink);
+  transform: translateY(-2px);
+}
+.nav-btn {
+  padding: 9px 16px;
+  border-radius: 999px;
+  background: var(--soft-pink);
+  color: var(--deep-pink) !important;
+}
+.profile-area {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+.user-pill {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  background: var(--soft-pink);
+  color: var(--deep-pink);
+  padding: 8px 13px;
+  border-radius: 999px;
+  font-size: 0.86rem;
+  font-weight: 600;
+}
+.logout-btn {
+  background: var(--deep-pink);
+  color: var(--white);
+  padding: 8px 13px;
+  border-radius: 999px;
+  font-size: 0.82rem;
+}
+.menu-btn {
+  display: none;
+  background: var(--soft-pink);
+  color: var(--deep-pink);
+  width: 42px;
+  height: 42px;
+  border-radius: 50%;
+  font-size: 1.3rem;
+}
+/* =========================
+   Page Layout
+========================= */
+main {
+  position: relative;
+  z-index: 2;
+}
+.page {
+  display: none;
+  width: min(1180px, 92%);
+  margin: 45px auto;
+  animation: fadeUp 0.6s ease;
+}
+.page.active {
+  display: block;
+}
+/* =========================
+   Hero Section
+========================= */
+.hero {
+  display: grid;
+  grid-template-columns: 1.05fr 0.95fr;
+  align-items: center;
+  gap: 50px;
+  min-height: 72vh;
+}
+.hero-text {
+  animation: fadeUp 0.8s ease;
+}
+.tagline {
+  display: inline-block;
+  background: var(--white);
+  color: var(--deep-pink);
+  padding: 9px 18px;
+  border-radius: 999px;
+  font-weight: 600;
+  box-shadow: var(--shadow);
+  margin-bottom: 22px;
+}
+.hero-text h1 {
+  font-size: clamp(2.8rem, 6vw, 5.8rem);
+  line-height: 1.05;
+  margin-bottom: 20px;
+}
+.hero-text h1 span {
+  font-family: "Pacifico", cursive;
+  color: var(--deep-pink);
+}
+.hero-text p {
+  max-width: 570px;
+  color: var(--muted);
+  font-size: 1.05rem;
+  line-height: 1.8;
+}
+.hero-buttons {
+  margin-top: 32px;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 16px;
+}
+.primary-btn,
+.secondary-btn {
+  padding: 14px 24px;
+  border-radius: 999px;
+  font-weight: 700;
+  font-size: 0.96rem;
+  transition: 0.3s ease;
+}
+.primary-btn {
+  background: linear-gradient(135deg, var(--pink), var(--deep-pink));
+  color: var(--white);
+  box-shadow: 0 12px 25px rgba(217, 95, 141, 0.28);
+}
+.secondary-btn {
+  background: var(--white);
+  color: var(--deep-pink);
+  box-shadow: var(--shadow);
+}
+.primary-btn:hover,
+.secondary-btn:hover {
+  transform: translateY(-4px) scale(1.03);
+}
+.primary-btn:active,
+.secondary-btn:active {
+  transform: scale(0.96);
+}
+.hero-image {
+  position: relative;
+}
+.hero-image::before {
+  content: "";
+  position: absolute;
+  inset: -18px;
+  background: linear-gradient(135deg, #ffd7e5, #fff8f1);
+  border-radius: 38px;
+  transform: rotate(-4deg);
+  z-index: -1;
+}
+.hero-image img {
+  width: 100%;
+  height: 510px;
+  object-fit: cover;
+  border-radius: 38px;
+  box-shadow: var(--shadow);
+  animation: softFloat 5s ease-in-out infinite;
+}
+/* =========================
+   Categories Homepage
+========================= */
+.categories-section,
+.goal-section {
+  margin-top: 70px;
+  text-align: center;
+}
+.categories-section h2,
+.goal-section h2,
+.section-header h2 {
+  font-size: clamp(2rem, 4vw, 3rem);
+  color: var(--deep-pink);
+  font-family: "Pacifico", cursive;
+  margin-bottom: 10px;
+}
+.categories-section p,
+.goal-section p,
+.section-header p {
+  color: var(--muted);
+}
+.category-grid,
+.goal-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 22px;
+  margin-top: 35px;
+}
+.category-card {
+  background: rgba(255, 255, 255, 0.86);
+  padding: 35px 25px;
+  border-radius: var(--radius);
+  box-shadow: var(--shadow);
+  transition: 0.3s ease;
+  cursor: pointer;
+}
+.category-card:hover {
+  transform: translateY(-8px);
+}
+.category-card span {
+  font-size: 3rem;
+}
+.category-card h3 {
+  margin: 14px 0 8px;
+  font-size: 1.35rem;
+}
+.category-card p {
+  font-size: 0.95rem;
+  line-height: 1.6;
+}
+.goal-grid button {
+  background: var(--white);
+  color: var(--deep-pink);
+  padding: 24px;
+  border-radius: var(--radius);
+  font-weight: 700;
+  box-shadow: var(--shadow);
+  transition: 0.3s ease;
+}
+.goal-grid button:hover {
+  background: var(--soft-pink);
+  transform: translateY(-6px);
+}
+/* =========================
+   Section Headers + Filters
+========================= */
+.section-header {
+  text-align: center;
+  margin-bottom: 35px;
+}
+.filters {
+  background: rgba(255, 255, 255, 0.75);
+  padding: 18px;
+  border-radius: var(--radius);
+  box-shadow: var(--shadow);
+  display: grid;
+  grid-template-columns: 1.5fr 1fr 1fr;
+  gap: 14px;
+  margin-bottom: 30px;
+}
+.filters input,
+.filters select {
+  width: 100%;
+  border: 2px solid transparent;
+  background: var(--white);
+  padding: 14px 16px;
+  border-radius: 999px;
+  outline: none;
+  color: var(--text);
+  transition: 0.3s ease;
+}
+.filters input:focus,
+.filters select:focus {
+  border-color: var(--pink);
+  box-shadow: 0 0 0 4px rgba(248, 168, 198, 0.22);
+}
+/* =========================
+   Animations
+========================= */
+@keyframes fadeUp {
+  from {
+    opacity: 0;
+    transform: translateY(25px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+@keyframes popIn {
+  from {
+    transform: scale(0.86);
+    opacity: 0;
+  }
+  to {
+    transform: scale(1);
+    opacity: 1;
+  }
+}
+@keyframes bounce {
+  0%, 100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-14px);
+  }
+}
+@keyframes float {
+  0%, 100% {
+    transform: translateY(0) rotate(0deg);
+  }
+  50% {
+    transform: translateY(-22px) rotate(8deg);
+  }
+}
+@keyframes softFloat {
+  0%, 100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-12px);
+  }
+}
+/* =========================
+   Recipe Cards
+========================= */
+.recipe-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 25px;
+}
+.recipe-card {
+  background: rgba(255, 255, 255, 0.9);
+  border-radius: var(--radius);
+  overflow: hidden;
+  box-shadow: var(--shadow);
+  transition: 0.3s ease;
+  animation: fadeUp 0.5s ease;
+}
+.recipe-card:hover {
+  transform: translateY(-8px);
+}
+.recipe-card img {
+  width: 100%;
+  height: 220px;
+  object-fit: cover;
+}
+.recipe-content {
+  padding: 22px;
+}
+.recipe-content h3 {
+  margin-bottom: 8px;
+  color: var(--text);
+}
+.recipe-content p {
+  color: var(--muted);
+  font-size: 0.94rem;
+  line-height: 1.6;
+}
+.recipe-meta {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin: 15px 0;
+}
+.recipe-meta span {
+  background: var(--soft-pink);
+  color: var(--deep-pink);
+  padding: 6px 11px;
+  border-radius: 999px;
+  font-size: 0.8rem;
+  font-weight: 600;
+}
+.card-actions {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 12px;
+  margin-top: 16px;
+}
+.heart-btn {
+  width: 43px;
+  height: 43px;
+  border-radius: 50%;
+  background: var(--soft-pink);
+  font-size: 1.15rem;
+  transition: 0.25s ease;
+}
+.heart-btn:hover,
+.heart-btn.active {
+  background: var(--deep-pink);
+  color: white;
+  transform: scale(1.1);
+}
+.view-btn {
+  flex: 1;
+  background: linear-gradient(135deg, var(--pink), var(--deep-pink));
+  color: white;
+  padding: 12px 18px;
+  border-radius: 999px;
+  font-weight: 700;
+  transition: 0.3s ease;
+}
+.view-btn:hover {
+  transform: translateY(-3px);
+}
+/* =========================
+   Recipe Detail Page
+========================= */
+.recipe-detail {
+  background: rgba(255, 255, 255, 0.92);
+  border-radius: 35px;
+  box-shadow: var(--shadow);
+  overflow: hidden;
+  animation: fadeUp 0.6s ease;
+}
+.recipe-detail img {
+  width: 100%;
+  height: 430px;
+  object-fit: cover;
+}
+.detail-body {
+  padding: 35px;
+}
+.detail-body h2 {
+  color: var(--deep-pink);
+  font-family: "Pacifico", cursive;
+  font-size: 2.7rem;
+  margin-bottom: 12px;
+}
+.detail-description {
+  color: var(--muted);
+  line-height: 1.8;
+  margin-bottom: 22px;
+}
+.detail-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 14px;
+  margin: 25px 0;
+}
+.detail-box {
+  background: var(--soft-pink);
+  color: var(--deep-pink);
+  padding: 15px;
+  border-radius: 18px;
+  text-align: center;
+  font-weight: 700;
+}
+.detail-section {
+  margin-top: 28px;
+}
+.detail-section h3 {
+  margin-bottom: 12px;
+  color: var(--text);
+}
+.detail-section ul,
+.detail-section ol {
+  padding-left: 22px;
+  color: var(--muted);
+  line-height: 1.9;
+}
+.detail-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+  margin-top: 30px;
+}
+.back-btn,
+.share-btn {
+  padding: 13px 22px;
+  border-radius: 999px;
+  font-weight: 700;
+  transition: 0.3s ease;
+}
+.back-btn {
+  background: var(--beige);
+  color: var(--text);
+}
+.share-btn {
+  background: var(--white);
+  color: var(--deep-pink);
+  box-shadow: var(--shadow);
+}
+.back-btn:hover,
+.share-btn:hover {
+  transform: translateY(-3px);
+}
+.rating {
+  margin-top: 25px;
+}
+.stars {
+  display: flex;
+  gap: 6px;
+  font-size: 1.8rem;
+  margin-top: 8px;
+}
+.star {
+  cursor: pointer;
+  color: #d8c1ca;
+  transition: 0.2s ease;
+}
+.star.active,
+.star:hover {
+  color: #f7a7c5;
+  transform: scale(1.15);
+}
+/* =========================
+   Info Pages
+========================= */
+.info-page {
+  background: rgba(255, 255, 255, 0.9);
+  padding: 45px;
+  border-radius: 35px;
+  box-shadow: var(--shadow);
+  text-align: center;
+}
+.info-page h2 {
+  font-family: "Pacifico", cursive;
+  color: var(--deep-pink);
+  font-size: 3rem;
+  margin-bottom: 18px;
+}
+.info-page > p {
+  max-width: 780px;
+  margin: 0 auto 18px;
+  color: var(--muted);
+  line-height: 1.8;
+}
+.about-cards {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 22px;
+  margin-top: 35px;
+}
+.about-cards div {
+  background: var(--cream);
+  padding: 28px;
+  border-radius: var(--radius);
+  box-shadow: 0 8px 20px rgba(217, 95, 141, 0.1);
+}
+.about-cards span {
+  font-size: 2.6rem;
+}
+.about-cards h3 {
+  margin: 12px 0 8px;
+}
+.about-cards p {
+  color: var(--muted);
+  line-height: 1.6;
+}
+/* =========================
+   Contact Page
+========================= */
+.contact-wrapper {
+  display: grid;
+  grid-template-columns: 0.8fr 1.2fr;
+  gap: 28px;
+  margin-top: 35px;
+  text-align: left;
+}
+.contact-info {
+  background: var(--soft-pink);
+  padding: 28px;
+  border-radius: var(--radius);
+  color: var(--text);
+  line-height: 2;
+}
+.contact-form {
+  display: grid;
+  gap: 15px;
+}
+.contact-form input,
+.contact-form textarea {
+  width: 100%;
+  border: 2px solid transparent;
+  outline: none;
+  padding: 15px 18px;
+  border-radius: 18px;
+  background: var(--cream);
+  color: var(--text);
+  resize: none;
+  transition: 0.3s ease;
+}
+.contact-form textarea {
+  min-height: 150px;
+}
+.contact-form input:focus,
+.contact-form textarea:focus {
+  border-color: var(--pink);
+  background: white;
+}
+/* =========================
+   Login / Sign Up
+========================= */
+.auth-card {
+  width: min(460px, 100%);
+  margin: 70px auto;
+  background: rgba(255, 255, 255, 0.92);
+  padding: 42px;
+  border-radius: 35px;
+  box-shadow: var(--shadow);
+  text-align: center;
+}
+.auth-card h2 {
+  font-family: "Pacifico", cursive;
+  color: var(--deep-pink);
+  font-size: 2.8rem;
+}
+.auth-card p {
+  color: var(--muted);
+  margin: 10px 0 24px;
+}
+.auth-card form {
+  display: grid;
+  gap: 15px;
+}
+.auth-card input {
+  padding: 15px 18px;
+  border-radius: 999px;
+  border: 2px solid transparent;
+  background: var(--cream);
+  outline: none;
+  transition: 0.3s ease;
+}
+.auth-card input:focus {
+  border-color: var(--pink);
+  background: white;
+}
+.switch-auth {
+  font-size: 0.92rem;
+}
+.switch-auth span {
+  color: var(--deep-pink);
+  font-weight: 700;
+  cursor: pointer;
+}
+/* =========================
+   Empty State
+========================= */
+.empty-state {
+  grid-column: 1 / -1;
+  text-align: center;
+  background: rgba(255, 255, 255, 0.9);
+  padding: 45px;
+  border-radius: var(--radius);
+  box-shadow: var(--shadow);
+}
+.empty-state h3 {
+  color: var(--deep-pink);
+  margin-bottom: 8px;
+}
+.empty-state p {
+  color: var(--muted);
+}
+/* =========================
+   Scroll Top Button
+========================= */
+#scrollTopBtn {
+  position: fixed;
+  right: 25px;
+  bottom: 25px;
+  width: 48px;
+  height: 48px;
+  border-radius: 50%;
+  background: var(--deep-pink);
+  color: white;
+  font-size: 1.4rem;
+  box-shadow: var(--shadow);
+  display: none;
+  z-index: 999;
+  transition: 0.3s ease;
+}
+#scrollTopBtn:hover {
+  transform: translateY(-5px);
+}
+/* =========================
+   Footer
+========================= */
+footer {
+  width: min(1180px, 92%);
+  margin: 60px auto 25px;
+  background: rgba(255, 255, 255, 0.85);
+  padding: 35px;
+  border-radius: 35px;
+  box-shadow: var(--shadow);
+  text-align: center;
+}
+.footer-logo h2 {
+  font-family: "Pacifico", cursive;
+  color: var(--deep-pink);
+  font-size: 2rem;
+}
+.footer-logo p {
+  color: var(--muted);
+  margin-top: 5px;
+}
+.footer-links {
+  margin: 22px 0;
+  display: flex;
+  justify-content: center;
+  gap: 22px;
+  flex-wrap: wrap;
+}
+.footer-links a {
+  color: var(--deep-pink);
+  font-weight: 600;
+}
+.copyright {
+  color: var(--muted);
+  font-size: 0.9rem;
+}
+/* =========================
+   Responsive Design
+========================= */
+@media (max-width: 980px) {
+  .navbar {
+    border-radius: 28px;
+  }
+  #navMenu {
+    position: absolute;
+    top: 75px;
+    right: 0;
+    width: 260px;
+    padding: 22px;
+    background: white;
+    border-radius: 24px;
+    box-shadow: var(--shadow);
+    flex-direction: column;
+    align-items: flex-start;
+    display: none;
+  }
+  #navMenu.open {
+    display: flex;
+  }
+  .menu-btn {
+    display: block;
+  }
+  .hero {
+    grid-template-columns: 1fr;
+    text-align: center;
+  }
+  .hero-text p {
+    margin: 0 auto;
+  }
+  .hero-buttons {
+    justify-content: center;
+  }
+  .hero-image img {
+    height: 390px;
+  }
+  .category-grid,
+  .goal-grid,
+  .recipe-grid,
+  .about-cards {
+    grid-template-columns: repeat(2, 1fr);
+  }
+  .filters {
+    grid-template-columns: 1fr;
+  }
+  .detail-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+  .contact-wrapper {
+    grid-template-columns: 1fr;
+  }
+}
+@media (max-width: 620px) {
+  .navbar {
+    width: 94%;
+    padding: 12px 15px;
+  }
+  .logo h2 {
+    font-size: 1.35rem;
+  }
+  .page {
+    width: 94%;
+    margin: 28px auto;
+  }
+  .hero-text h1 {
+    font-size: 2.7rem;
+  }
+  .hero-image img {
+    height: 280px;
+    border-radius: 26px;
+  }
+  .category-grid,
+  .goal-grid,
+  .recipe-grid,
+  .about-cards {
+    grid-template-columns: 1fr;
+  }
+  .detail-body {
+    padding: 24px;
+  }
+  .detail-body h2 {
+    font-size: 2.1rem;
+  }
+  .recipe-detail img {
+    height: 280px;
+  }
+  .detail-grid {
+    grid-template-columns: 1fr;
+  }
+  .info-page,
+  .auth-card {
+    padding: 28px;
+    border-radius: 26px;
+  }
+  .info-page h2,
+  .auth-card h2 {
+    font-size: 2.3rem;
+  }
+  .footer-links {
+    flex-direction: column;
+    gap: 12px;
+  }
+}
+/* BlushBites - JavaScript */
+const recipes = [
+  // SNACKS - LOW
+  {id:1,title:"Greek Yogurt Berry Bowl",category:"snacks",goal:"low",desc:"Creamy yogurt with berries and crunch.",img:"https://images.unsplash.com/photo-1488477181946-6428a0291777?auto=format&fit=crop&w=900&q=80",time:"10 min",difficulty:"Easy",calories:230,protein:24,ingredients:["200g Greek yogurt","80g berries","1 tbsp granola","1 tsp honey"],steps:["Add yogurt to a bowl.","Top with berries and granola.","Drizzle honey and serve."]},
+  {id:2,title:"Turkey Lettuce Wraps",category:"snacks",goal:"low",desc:"Light wraps packed with protein.",img:"https://images.unsplash.com/photo-1543352634-a1c51d9f1fa7?auto=format&fit=crop&w=900&q=80",time:"15 min",difficulty:"Easy",calories:210,protein:27,ingredients:["Lettuce leaves","100g turkey slices","Tomato","Cucumber","Light cream cheese"],steps:["Spread cream cheese on lettuce.","Add turkey and vegetables.","Roll tightly and serve."]},
+  {id:3,title:"Egg White Muffins",category:"snacks",goal:"low",desc:"Mini protein muffins with veggies.",img:"https://images.unsplash.com/photo-1510693206972-df098062cb71?auto=format&fit=crop&w=900&q=80",time:"25 min",difficulty:"Medium",calories:190,protein:22,ingredients:["6 egg whites","Spinach","Bell pepper","Salt","Pepper"],steps:["Mix egg whites and veggies.","Pour into muffin tin.","Bake at 180°C for 18 minutes."]},
+  {id:4,title:"Tuna Cucumber Bites",category:"snacks",goal:"low",desc:"Fresh cucumber topped with tuna.",img:"https://images.unsplash.com/photo-1604908176997-125f25cc6f3d?auto=format&fit=crop&w=900&q=80",time:"10 min",difficulty:"Easy",calories:180,protein:25,ingredients:["1 cucumber","1 tuna can","Greek yogurt","Lemon juice","Parsley"],steps:["Slice cucumber.","Mix tuna with yogurt and lemon.","Top cucumber slices with tuna."]},
+  {id:5,title:"Protein Apple Dip",category:"snacks",goal:"low",desc:"Sweet apple slices with protein dip.",img:"https://images.unsplash.com/photo-1567306226416-28f0efdc88ce?auto=format&fit=crop&w=900&q=80",time:"8 min",difficulty:"Easy",calories:240,protein:21,ingredients:["1 apple","150g Greek yogurt","1 scoop vanilla protein","Cinnamon"],steps:["Slice apple.","Mix yogurt with protein powder.","Sprinkle cinnamon and dip."]},
+  // SNACKS - HIGH
+  {id:6,title:"Peanut Butter Protein Toast",category:"snacks",goal:"high",desc:"Energy toast with banana and protein.",img:"https://images.unsplash.com/photo-1525351484163-7529414344d8?auto=format&fit=crop&w=900&q=80",time:"10 min",difficulty:"Easy",calories:520,protein:32,ingredients:["2 bread slices","2 tbsp peanut butter","1 banana","1 scoop protein"],steps:["Toast bread.","Spread peanut butter.","Add banana and protein drizzle."]},
+  {id:7,title:"Chicken Avocado Bagel",category:"snacks",goal:"high",desc:"A filling high-protein snack.",img:"https://images.unsplash.com/photo-1550317138-10000687a72b?auto=format&fit=crop&w=900&q=80",time:"15 min",difficulty:"Easy",calories:610,protein:42,ingredients:["1 bagel","120g chicken","1/2 avocado","Lettuce","Yogurt sauce"],steps:["Toast bagel.","Add avocado and chicken.","Top with sauce and lettuce."]},
+  {id:8,title:"Cottage Cheese Power Bowl",category:"snacks",goal:"high",desc:"Creamy, crunchy and filling.",img:"https://images.unsplash.com/photo-1494390248081-4e521a5940db?auto=format&fit=crop&w=900&q=80",time:"10 min",difficulty:"Easy",calories:480,protein:35,ingredients:["200g cottage cheese","Granola","Almonds","Berries","Honey"],steps:["Add cottage cheese to bowl.","Top with granola and nuts.","Add berries and honey."]},
+  {id:9,title:"Protein Trail Mix",category:"snacks",goal:"high",desc:"A sweet and salty energy mix.",img:"https://images.unsplash.com/photo-1599599810769-bcde5a160d32?auto=format&fit=crop&w=900&q=80",time:"5 min",difficulty:"Easy",calories:560,protein:26,ingredients:["Almonds","Cashews","Protein cereal","Dark chocolate","Dried fruit"],steps:["Mix all ingredients.","Store in a jar.","Serve as needed."]},
+  {id:10,title:"Salmon Rice Cakes",category:"snacks",goal:"high",desc:"Crunchy cakes with salmon and cream cheese.",img:"https://images.unsplash.com/photo-1519708227418-c8fd9a32b7a2?auto=format&fit=crop&w=900&q=80",time:"12 min",difficulty:"Easy",calories:470,protein:31,ingredients:["Rice cakes","Smoked salmon","Cream cheese","Cucumber","Dill"],steps:["Spread cream cheese.","Add salmon and cucumber.","Top with dill."]},
+  // SNACKS - TREAT
+  {id:11,title:"Strawberry Cream Croissant",category:"snacks",goal:"treat",desc:"Flaky croissant with strawberry cream.",img:"https://images.unsplash.com/photo-1509440159596-0249088772ff?auto=format&fit=crop&w=900&q=80",time:"15 min",difficulty:"Easy",ingredients:["Croissant","Whipped cream","Strawberries","Powdered sugar"],steps:["Slice croissant.","Fill with cream and strawberries.","Dust with sugar."]},
+  {id:12,title:"Mini Nutella Pancake Bites",category:"snacks",goal:"treat",desc:"Tiny pancakes with chocolate spread.",img:"https://images.unsplash.com/photo-1528207776546-365bb710ee93?auto=format&fit=crop&w=900&q=80",time:"20 min",difficulty:"Easy",ingredients:["Mini pancakes","Nutella","Strawberries","Powdered sugar"],steps:["Cook mini pancakes.","Spread Nutella.","Stack and top with strawberries."]},
+  {id:13,title:"Cheesy Garlic Bread Bites",category:"snacks",goal:"treat",desc:"Warm cheesy garlic bites.",img:"https://images.unsplash.com/photo-1573140247632-f8fd74997d5c?auto=format&fit=crop&w=900&q=80",time:"18 min",difficulty:"Easy",ingredients:["Bread","Butter","Garlic","Mozzarella","Parsley"],steps:["Mix butter and garlic.","Spread on bread.","Add cheese and bake."]},
+  {id:14,title:"Pink Popcorn Mix",category:"snacks",goal:"treat",desc:"Cute sweet popcorn for movie nights.",img:"https://images.unsplash.com/photo-1578849278619-e73505e9610f?auto=format&fit=crop&w=900&q=80",time:"10 min",difficulty:"Easy",ingredients:["Popcorn","White chocolate","Pink sprinkles","Mini marshmallows"],steps:["Melt chocolate.","Drizzle over popcorn.","Add sprinkles and marshmallows."]},
+  {id:15,title:"Cookie Dough Cups",category:"snacks",goal:"treat",desc:"No-bake cookie dough cups.",img:"https://images.unsplash.com/photo-1499636136210-6f4ee915583e?auto=format&fit=crop&w=900&q=80",time:"20 min",difficulty:"Medium",ingredients:["Flour","Butter","Brown sugar","Chocolate chips","Vanilla"],steps:["Heat flour safely.","Mix with butter and sugar.","Fold chocolate chips and chill."]},
+  // DESSERTS - LOW
+  {id:16,title:"Protein Cheesecake Cups",category:"desserts",goal:"low",desc:"Mini cheesecake cups with berries.",img:"https://images.unsplash.com/photo-1533134242443-d4fd215305ad?auto=format&fit=crop&w=900&q=80",time:"30 min",difficulty:"Medium",calories:260,protein:25,ingredients:["Greek yogurt","Light cream cheese","Protein powder","Berries","Digestive crumbs"],steps:["Mix yogurt, cheese and protein.","Layer crumbs and cream.","Chill and top with berries."]},
+  {id:17,title:"Chocolate Protein Mousse",category:"desserts",goal:"low",desc:"Light chocolate mousse.",img:"https://images.unsplash.com/photo-1606313564200-e75d5e30476c?auto=format&fit=crop&w=900&q=80",time:"15 min",difficulty:"Easy",calories:220,protein:24,ingredients:["Greek yogurt","Cocoa powder","Chocolate protein","Sweetener"],steps:["Mix all ingredients.","Whisk until smooth.","Chill before serving."]},
+  {id:18,title:"Berry Frozen Yogurt Bark",category:"desserts",goal:"low",desc:"Frozen yogurt bark with fruit.",img:"https://images.unsplash.com/photo-1505252585461-04db1eb84625?auto=format&fit=crop&w=900&q=80",time:"2 hrs",difficulty:"Easy",calories:190,protein:18,ingredients:["Greek yogurt","Berries","Honey","Granola"],steps:["Spread yogurt on tray.","Add toppings.","Freeze and break into pieces."]},
+  {id:19,title:"Protein Mug Cake",category:"desserts",goal:"low",desc:"Quick fluffy cake in a mug.",img:"https://images.unsplash.com/photo-1605478371310-a9f1e96b4ff4?auto=format&fit=crop&w=900&q=80",time:"6 min",difficulty:"Easy",calories:250,protein:23,ingredients:["Protein powder","Egg white","Cocoa","Milk","Baking powder"],steps:["Mix ingredients in mug.","Microwave 60-90 seconds.","Let cool slightly."]},
+  {id:20,title:"Cinnamon Apple Protein Bake",category:"desserts",goal:"low",desc:"Warm apple bake with protein.",img:"https://images.unsplash.com/photo-1568571780765-9276ac8b75a8?auto=format&fit=crop&w=900&q=80",time:"28 min",difficulty:"Easy",calories:280,protein:22,ingredients:["Apple","Greek yogurt","Protein powder","Cinnamon","Oats"],steps:["Slice apple.","Mix topping ingredients.","Bake at 180°C."]},
+  // DESSERTS - HIGH
+  {id:21,title:"Protein Brownie Bowl",category:"desserts",goal:"high",desc:"Rich brownie-style dessert bowl.",img:"https://images.unsplash.com/photo-1606313564200-e75d5e30476c?auto=format&fit=crop&w=900&q=80",time:"12 min",difficulty:"Easy",calories:590,protein:38,ingredients:["Protein powder","Oats","Cocoa","Peanut butter","Milk"],steps:["Mix ingredients.","Microwave until thick.","Top with peanut butter."]},
+  {id:22,title:"High Protein Tiramisu",category:"desserts",goal:"high",desc:"A creamy protein tiramisu.",img:"https://images.unsplash.com/photo-1571877227200-a0d98ea607e9?auto=format&fit=crop&w=900&q=80",time:"40 min",difficulty:"Medium",calories:620,protein:42,ingredients:["Ladyfingers","Greek yogurt","Mascarpone","Protein powder","Coffee"],steps:["Dip ladyfingers in coffee.","Layer cream mixture.","Chill before serving."]},
+  {id:23,title:"Banana Protein Split",category:"desserts",goal:"high",desc:"A protein twist on banana split.",img:"https://images.unsplash.com/photo-1563805042-7684c019e1cb?auto=format&fit=crop&w=900&q=80",time:"10 min",difficulty:"Easy",calories:540,protein:34,ingredients:["Banana","Greek yogurt","Protein powder","Granola","Chocolate chips"],steps:["Slice banana.","Mix yogurt and protein.","Add toppings."]},
+  {id:24,title:"Peanut Butter Oat Bars",category:"desserts",goal:"high",desc:"Dense bars for extra energy.",img:"https://images.unsplash.com/photo-1622484211148-302153179fd8?auto=format&fit=crop&w=900&q=80",time:"1 hr",difficulty:"Easy",calories:500,protein:28,ingredients:["Oats","Peanut butter","Protein powder","Honey","Milk"],steps:["Mix all ingredients.","Press into tray.","Chill and slice."]},
+  {id:25,title:"Protein Cookie Sandwich",category:"desserts",goal:"high",desc:"Creamy filling between protein cookies.",img:"https://images.unsplash.com/photo-1499636136210-6f4ee915583e?auto=format&fit=crop&w=900&q=80",time:"25 min",difficulty:"Medium",calories:570,protein:36,ingredients:["Protein cookies","Greek yogurt","Cream cheese","Honey"],steps:["Mix filling.","Spread between cookies.","Chill before serving."]},
+  // DESSERTS - TREAT
+  {id:26,title:"Pink Velvet Cupcakes",category:"desserts",goal:"treat",desc:"Soft pink cupcakes with frosting.",img:"https://images.unsplash.com/photo-1587668178277-295251f900ce?auto=format&fit=crop&w=900&q=80",time:"45 min",difficulty:"Medium",ingredients:["Flour","Sugar","Butter","Eggs","Pink food coloring","Frosting"],steps:["Make cupcake batter.","Bake until fluffy.","Pipe frosting on top."]},
+  {id:27,title:"Strawberry Shortcake",category:"desserts",goal:"treat",desc:"Classic strawberry cake.",img:"https://images.unsplash.com/photo-1464305795204-6f5bbfc7fb81?auto=format&fit=crop&w=900&q=80",time:"55 min",difficulty:"Medium",ingredients:["Sponge cake","Cream","Strawberries","Sugar"],steps:["Bake or prepare sponge.","Layer cream and strawberries.","Chill before slicing."]},
+  {id:28,title:"White Chocolate Blondies",category:"desserts",goal:"treat",desc:"Sweet chewy blondies.",img:"https://images.unsplash.com/photo-1606313564200-e75d5e30476c?auto=format&fit=crop&w=900&q=80",time:"40 min",difficulty:"Medium",ingredients:["Butter","Brown sugar","Flour","Eggs","White chocolate"],steps:["Mix batter.","Fold chocolate.","Bake and cool."]},
+  {id:29,title:"Raspberry Cream Tart",category:"desserts",goal:"treat",desc:"Elegant tart with raspberries.",img:"https://images.unsplash.com/photo-1519915028121-7d3463d20b13?auto=format&fit=crop&w=900&q=80",time:"1 hr",difficulty:"Hard",ingredients:["Tart shell","Pastry cream","Raspberries","Powdered sugar"],steps:["Bake tart shell.","Fill with pastry cream.","Top with raspberries."]},
+  {id:30,title:"Chocolate Lava Cake",category:"desserts",goal:"treat",desc:"Warm cake with melted center.",img:"https://images.unsplash.com/photo-1617305855058-336d24456869?auto=format&fit=crop&w=900&q=80",time:"25 min",difficulty:"Medium",ingredients:["Dark chocolate","Butter","Eggs","Sugar","Flour"],steps:["Melt chocolate and butter.","Mix batter.","Bake until edges set."]},
+  // DRINKS - LOW
+  {id:31,title:"Strawberry Protein Smoothie",category:"drinks",goal:"low",desc:"Pretty pink protein smoothie.",img:"https://images.unsplash.com/photo-1553530666-ba11a7da3888?auto=format&fit=crop&w=900&q=80",time:"5 min",difficulty:"Easy",calories:210,protein:25,ingredients:["Strawberries","Protein powder","Almond milk","Greek yogurt"],steps:["Add all ingredients to blender.","Blend until smooth.","Serve cold."]},
+  {id:32,title:"Iced Vanilla Protein Latte",category:"drinks",goal:"low",desc:"Coffee with a protein boost.",img:"https://images.unsplash.com/photo-1461023058943-07fcbe16d735?auto=format&fit=crop&w=900&q=80",time:"5 min",difficulty:"Easy",calories:180,protein:22,ingredients:["Cold coffee","Vanilla protein","Milk","Ice"],steps:["Shake coffee, milk and protein.","Pour over ice.","Serve immediately."]},
+  {id:33,title:"Mango Protein Cooler",category:"drinks",goal:"low",desc:"Tropical and refreshing.",img:"https://images.unsplash.com/photo-1622597467836-f3285f2131b8?auto=format&fit=crop&w=900&q=80",time:"7 min",difficulty:"Easy",calories:240,protein:23,ingredients:["Mango","Protein powder","Water","Ice","Lime"],steps:["Blend all ingredients.","Taste and adjust lime.","Serve chilled."]},
+  {id:34,title:"Berry Yogurt Drink",category:"drinks",goal:"low",desc:"Creamy berry drink.",img:"https://images.unsplash.com/photo-1553787499-6f9133860278?auto=format&fit=crop&w=900&q=80",time:"6 min",difficulty:"Easy",calories:200,protein:21,ingredients:["Mixed berries","Greek yogurt","Water","Sweetener"],steps:["Blend everything.","Add water if needed.","Pour and enjoy."]},
+  {id:35,title:"Matcha Protein Shake",category:"drinks",goal:"low",desc:"Smooth matcha energy drink.",img:"https://images.unsplash.com/photo-1515823064-d6e0c04616a7?auto=format&fit=crop&w=900&q=80",time:"5 min",difficulty:"Easy",calories:190,protein:24,ingredients:["Matcha","Protein powder","Milk","Ice"],steps:["Whisk matcha.","Blend with milk and protein.","Serve over ice."]},
+  // DRINKS - HIGH
+  {id:36,title:"Peanut Butter Banana Shake",category:"drinks",goal:"high",desc:"Creamy high-calorie protein shake.",img:"https://images.unsplash.com/photo-1577805947697-89e18249d767?auto=format&fit=crop&w=900&q=80",time:"6 min",difficulty:"Easy",calories:650,protein:42,ingredients:["Banana","Peanut butter","Protein powder","Milk","Oats"],steps:["Add all to blender.","Blend until creamy.","Serve cold."]},
+  {id:37,title:"Chocolate Oat Protein Shake",category:"drinks",goal:"high",desc:"Thick chocolate oat shake.",img:"https://images.unsplash.com/photo-1572490122747-3968b75cc699?auto=format&fit=crop&w=900&q=80",time:"7 min",difficulty:"Easy",calories:620,protein:40,ingredients:["Oats","Chocolate protein","Milk","Cocoa","Honey"],steps:["Blend oats first.","Add remaining ingredients.","Blend again."]},
+  {id:38,title:"Strawberry Cheesecake Shake",category:"drinks",goal:"high",desc:"Dessert-like protein shake.",img:"https://images.unsplash.com/photo-1553787499-6f9133860278?auto=format&fit=crop&w=900&q=80",time:"8 min",difficulty:"Easy",calories:590,protein:38,ingredients:["Strawberries","Cream cheese","Protein powder","Milk","Biscuits"],steps:["Blend strawberries and milk.","Add cheese and protein.","Top with biscuit crumbs."]},
+  {id:39,title:"Vanilla Almond Mass Shake",category:"drinks",goal:"high",desc:"Smooth shake for extra energy.",img:"https://images.unsplash.com/photo-1551024709-8f23befc6f87?auto=format&fit=crop&w=900&q=80",time:"5 min",difficulty:"Easy",calories:700,protein:44,ingredients:["Milk","Protein powder","Almond butter","Banana","Honey"],steps:["Add ingredients to blender.","Blend until thick.","Serve with ice."]},
+  {id:40,title:"Coffee Caramel Protein Frappe",category:"drinks",goal:"high",desc:"Sweet iced coffee protein drink.",img:"https://images.unsplash.com/photo-1509042239860-f550ce710b93?auto=format&fit=crop&w=900&q=80",time:"8 min",difficulty:"Easy",calories:560,protein:35,ingredients:["Coffee","Protein powder","Milk","Caramel","Ice"],steps:["Blend coffee, milk and protein.","Add ice and caramel.","Blend until frothy."]},
+  // DRINKS - TREAT
+  {id:41,title:"Pink Strawberry Milkshake",category:"drinks",goal:"treat",desc:"Classic sweet strawberry shake.",img:"https://images.unsplash.com/photo-1579954115545-a95591f28bfc?auto=format&fit=crop&w=900&q=80",time:"8 min",difficulty:"Easy",ingredients:["Strawberries","Vanilla ice cream","Milk","Whipped cream"],steps:["Blend strawberries, milk and ice cream.","Pour into glass.","Top with whipped cream."]},
+  {id:42,title:"Cookies and Cream Frappe",category:"drinks",goal:"treat",desc:"Creamy cookie drink.",img:"https://images.unsplash.com/photo-1572490122747-3968b75cc699?auto=format&fit=crop&w=900&q=80",time:"8 min",difficulty:"Easy",ingredients:["Cookies","Milk","Ice cream","Ice","Whipped cream"],steps:["Blend cookies, milk and ice cream.","Add ice and blend.","Top with cream."]},
+  {id:43,title:"Raspberry Lemonade Sparkle",category:"drinks",goal:"treat",desc:"Sparkly raspberry lemonade.",img:"https://images.unsplash.com/photo-1523371054106-bbf80586c38c?auto=format&fit=crop&w=900&q=80",time:"10 min",difficulty:"Easy",ingredients:["Raspberries","Lemon juice","Sugar","Sparkling water","Ice"],steps:["Mash raspberries with sugar.","Add lemon juice.","Top with sparkling water."]},
+  {id:44,title:"Caramel Iced Cocoa",category:"drinks",goal:"treat",desc:"Cold cocoa with caramel.",img:"https://images.unsplash.com/photo-1541167760496-1628856ab772?auto=format&fit=crop&w=900&q=80",time:"7 min",difficulty:"Easy",ingredients:["Milk","Cocoa powder","Caramel sauce","Ice","Whipped cream"],steps:["Mix cocoa with milk.","Pour over ice.","Add caramel and cream."]},
+  {id:45,title:"Cotton Candy Mocktail",category:"drinks",goal:"treat",desc:"Cute pastel party drink.",img:"https://images.unsplash.com/photo-1556679343-c7306c1976bc?auto=format&fit=crop&w=900&q=80",time:"6 min",difficulty:"Easy",ingredients:["Cotton candy","Lemon soda","Ice","Strawberries"],steps:["Add cotton candy to glass.","Pour soda over it.","Add ice and strawberries."]}
+];
+let currentRecipes = recipes;
+let selectedCategory = "";
+let favorites = JSON.parse(localStorage.getItem("favorites")) || [];
+let ratings = JSON.parse(localStorage.getItem("ratings")) || {};
+let currentUser = JSON.parse(localStorage.getItem("currentUser")) || null;
+window.addEventListener("load", () => {
+  setTimeout(() => {
+    document.getElementById("loadingScreen").classList.add("hide");
+  }, 1200);
+  updateProfile();
+  renderRecipes(recipes);
+});
+function showPage(pageId) {
+  document.querySelectorAll(".page").forEach(page => page.classList.remove("active"));
+  document.getElementById(pageId).classList.add("active");
+  document.getElementById("navMenu").classList.remove("open");
+  window.scrollTo({ top: 0, behavior: "smooth" });
+}
+function toggleMenu() {
+  document.getElementById("navMenu").classList.toggle("open");
+}
+function scrollToCategories() {
+  document.getElementById("categorySection").scrollIntoView({ behavior: "smooth" });
+}
+function selectCategory(category) {
+  selectedCategory = category;
+  document.getElementById("goalSection").classList.remove("hidden");
+  document.getElementById("selectedCategoryText").textContent =
+    `You selected ${category.charAt(0).toUpperCase() + category.slice(1)}. Now choose your goal.`;
+  showPage("home");
+  setTimeout(() => {
+    document.getElementById("goalSection").scrollIntoView({ behavior: "smooth" });
+  }, 150);
+}
+function filterByGoal(goal) {
+  currentRecipes = recipes.filter(recipe => recipe.category === selectedCategory && recipe.goal === goal);
+  document.getElementById("recipesTitle").textContent =
+    `${selectedCategory.toUpperCase()} Recipes`;
+  renderRecipes(currentRecipes);
+  showPage("recipes");
+}
+function renderRecipes(list) {
+  const grid = document.getElementById("recipeGrid");
+  if (!list.length) {
+    grid.innerHTML = `
+      <div class="empty-state">
+        <h3>No recipes found</h3>
+        <p>Try another search or filter.</p>
+      </div>
+    `;
+    return;
+  }
+  grid.innerHTML = list.map(recipe => `
+    <div class="recipe-card">
+      <img src="${recipe.img}" alt="${recipe.title}">
+      <div class="recipe-content">
+        <h3>${recipe.title}</h3>
+        <p>${recipe.desc}</p>
+        <div class="recipe-meta">
+          <span>${recipe.time}</span>
+          <span>${recipe.difficulty}</span>
+          ${recipe.goal !== "treat" ? `<span>${recipe.calories} cal</span><span>${recipe.protein}g protein</span>` : ""}
+        </div>
+        <div class="card-actions">
+          <button class="heart-btn ${favorites.includes(recipe.id) ? "active" : ""}" onclick="toggleFavorite(${recipe.id})">❤️</button>
+          <button class="view-btn" onclick="viewRecipe(${recipe.id})">View Recipe</button>
+        </div>
+      </div>
+    </div>
+  `).join("");
+}
+function viewRecipe(id) {
+  const recipe = recipes.find(r => r.id === id);
+  const detail = document.getElementById("recipeDetailContent");
+  const savedRating = ratings[id] || 0;
+  detail.innerHTML = `
+    <img src="${recipe.img}" alt="${recipe.title}">
+    <div class="detail-body">
+      <h2>${recipe.title}</h2>
+      <p class="detail-description">${recipe.desc}</p>
+      <div class="detail-grid">
+        <div class="detail-box">⏱ ${recipe.time}</div>
+        <div class="detail-box">⭐ ${recipe.difficulty}</div>
+        ${recipe.goal !== "treat" ? `<div class="detail-box">🔥 ${recipe.calories} cal</div>` : ""}
+        ${recipe.goal !== "treat" ? `<div class="detail-box">💪 ${recipe.protein}g protein</div>` : ""}
+      </div>
+      <div class="detail-section">
+        <h3>Ingredients</h3>
+        <ul>${recipe.ingredients.map(item => `<li>${item}</li>`).join("")}</ul>
+      </div>
+      <div class="detail-section">
+        <h3>Instructions</h3>
+        <ol>${recipe.steps.map(step => `<li>${step}</li>`).join("")}</ol>
+      </div>
+      <div class="rating">
+        <h3>Rate this recipe</h3>
+        <div class="stars">
+          ${[1,2,3,4,5].map(star => `
+            <span class="star ${star <= savedRating ? "active" : ""}" onclick="rateRecipe(${id}, ${star})">★</span>
+          `).join("")}
+        </div>
+      </div>
+      <div class="detail-actions">
+        <button class="back-btn" onclick="showPage('recipes')">← Back</button>
+        <button class="heart-btn ${favorites.includes(recipe.id) ? "active" : ""}" onclick="toggleFavorite(${recipe.id}); viewRecipe(${recipe.id})">❤️</button>
+        <button class="share-btn" onclick="shareRecipe(${recipe.id})">Share Recipe</button>
+      </div>
+    </div>
+  `;
+  showPage("recipeDetail");
+}
+function toggleFavorite(id) {
+  if (favorites.includes(id)) {
+    favorites = favorites.filter(fav => fav !== id);
+  } else {
+    favorites.push(id);
+  }
+  localStorage.setItem("favorites", JSON.stringify(favorites));
+  renderRecipes(currentRecipes);
+}
+function showFavorites() {
+  const favRecipes = recipes.filter(recipe => favorites.includes(recipe.id));
+  const grid = document.getElementById("favoritesGrid");
+  if (!favRecipes.length) {
+    grid.innerHTML = `
+      <div class="empty-state">
+        <h3>No favorites yet 💕</h3>
+        <p>Click the heart on recipes to save them here.</p>
+      </div>
+    `;
+  } else {
+    grid.innerHTML = favRecipes.map(recipe => `
+      <div class="recipe-card">
+        <img src="${recipe.img}" alt="${recipe.title}">
+        <div class="recipe-content">
+          <h3>${recipe.title}</h3>
+          <p>${recipe.desc}</p>
+          <div class="recipe-meta">
+            <span>${recipe.time}</span>
+            <span>${recipe.difficulty}</span>
+            ${recipe.goal !== "treat" ? `<span>${recipe.calories} cal</span><span>${recipe.protein}g protein</span>` : ""}
+          </div>
+          <div class="card-actions">
+            <button class="heart-btn active" onclick="toggleFavorite(${recipe.id}); showFavorites()">❤️</button>
+            <button class="view-btn" onclick="viewRecipe(${recipe.id})">View Recipe</button>
+          </div>
+        </div>
+      </div>
+    `).join("");
+  }
+  showPage("favorites");
+}
+function searchRecipes() {
+  applyFilters();
+}
+function applyFilters() {
+  const search = document.getElementById("searchInput").value.toLowerCase();
+  const category = document.getElementById("categoryFilter").value;
+  const goal = document.getElementById("goalFilter").value;
+  currentRecipes = recipes.filter(recipe => {
+    const matchesSearch =
+      recipe.title.toLowerCase().includes(search) ||
+      recipe.desc.toLowerCase().includes(search);
+    const matchesCategory = category === "all" || recipe.category === category;
+    const matchesGoal = goal === "all" || recipe.goal === goal;
+    return matchesSearch && matchesCategory && matchesGoal;
+  });
+  renderRecipes(currentRecipes);
+}
+function showRandomRecipe() {
+  const random = recipes[Math.floor(Math.random() * recipes.length)];
+  viewRecipe(random.id);
+}
+function rateRecipe(id, stars) {
+  ratings[id] = stars;
+  localStorage.setItem("ratings", JSON.stringify(ratings));
+  viewRecipe(id);
+}
+function shareRecipe(id) {
+  const recipe = recipes.find(r => r.id === id);
+  const text = `Check out this BlushBites recipe: ${recipe.title}!`;
+  if (navigator.share) {
+    navigator.share({
+      title: recipe.title,
+      text: text,
+      url: window.location.href
+    });
+  } else {
+    navigator.clipboard.writeText(text);
+    alert("Recipe copied to clipboard!");
+  }
+}
+function signupUser(event) {
+  event.preventDefault();
+  const username = document.getElementById("signupUsername").value;
+  const email = document.getElementById("signupEmail").value;
+  const password = document.getElementById("signupPassword").value;
+  const accounts = JSON.parse(localStorage.getItem("accounts")) || [];
+  if (accounts.some(account => account.username === username)) {
+    alert("Username already exists!");
+    return;
+  }
+  accounts.push({ username, email, password });
+  localStorage.setItem("accounts", JSON.stringify(accounts));
+  alert("Account created successfully!");
+  showPage("login");
+}
+function loginUser(event) {
+  event.preventDefault();
+  const username = document.getElementById("loginUsername").value;
+  const password = document.getElementById("loginPassword").value;
+  const accounts = JSON.parse(localStorage.getItem("accounts")) || [];
+  const user = accounts.find(account => account.username === username && account.password === password);
+  if (!user) {
+    alert("Invalid username or password!");
+    return;
+  }
+  currentUser = user;
+  localStorage.setItem("currentUser", JSON.stringify(currentUser));
+  updateProfile();
+  alert(`Welcome back, ${username}! 💕`);
+  showPage("home");
+}
+function logoutUser() {
+  currentUser = null;
+  localStorage.removeItem("currentUser");
+  updateProfile();
+  showPage("home");
+}
+function updateProfile() {
+  const profileArea = document.getElementById("profileArea");
+  const loginNav = document.getElementById("loginNav");
+  const signupNav = document.getElementById("signupNav");
+  if (currentUser) {
+    profileArea.innerHTML = `
+      <div class="user-pill">👤 ${currentUser.username}</div>
+      <button class="logout-btn" onclick="logoutUser()">Logout</button>
+    `;
+    loginNav.style.display = "none";
+    signupNav.style.display = "none";
+  } else {
+    profileArea.innerHTML = "";
+    loginNav.style.display = "inline-block";
+    signupNav.style.display = "inline-block";
+  }
+}
+function sendContact(event) {
+  event.preventDefault();
+  alert("Thank you! Your message has been sent 💕");
+  event.target.reset();
+}
+window.addEventListener("scroll", () => {
+  const btn = document.getElementById("scrollTopBtn");
+  btn.style.display = window.scrollY > 400 ? "block" : "none";
+});
+function scrollToTop() {
+  window.scrollTo({ top: 0, behavior: "smooth" });
+}
+
+
+
